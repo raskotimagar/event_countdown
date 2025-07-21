@@ -1,0 +1,52 @@
+<!-- countdown.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ event.name }} Countdown</title>
+    <style>
+        #countdown {
+            font-family: Arial, sans-serif;
+            font-size: 2em;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Countdown to {{ event.name }}</h1>
+
+<div id="countdown">
+    Time remaining: <span id="timer"></span>
+</div>
+
+<script>
+    // Convert Django's event date to a format that JavaScript can handle in UTC
+    const eventDate = new Date("{{ event_date|date:'Y-m-d H:i:s' }} UTC").getTime();
+
+    // Update the countdown every second
+    const timerInterval = setInterval(function() {
+        const now = new Date().getTime();  // Current time in milliseconds
+        const timeRemaining = eventDate - now;
+
+        if (timeRemaining > 0) {
+            // Calculate days, hours, minutes, and seconds
+            const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+            // Display the result in the element with id="timer"
+            document.getElementById("timer").innerHTML = 
+                days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+        } else {
+            // If the countdown is finished, display "Event Started"
+            clearInterval(timerInterval);
+            document.getElementById("timer").innerHTML = "Event Started!";
+        }
+    }, 1000);
+</script>
+
+</body>
+</html>
