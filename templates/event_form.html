@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Event Form | Horizon{% endblock %}
+
+{% block content %}
+<body class="flex items-center justify-center min-h-screen p-4">
+    <!-- Decorative elements -->
+    <div class="decoration-element animation-float" style="top: 10%; left: 10%; animation-delay: 0s;">
+        <div class="bg-primary w-16 h-16 rounded-full"></div>
+    </div>
+    <div class="decoration-element animation-float" style="top: 20%; right: 15%; animation-delay: 0.2s;">
+        <div class="bg-secondary w-24 h-24 rounded-full"></div>
+    </div>
+    <div class="decoration-element animation-float" style="bottom: 15%; left: 20%; animation-delay: 0.4s;">
+        <div class="bg-purple-500 w-20 h-20 rounded-full"></div>
+    </div>
+    
+    <div class="form-container w-full max-w-2xl animation-fade-in">
+        <!-- Form Header -->
+        <div class="form-header p-6 text-center">
+            <div class="flex justify-center mb-4">
+                <div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center border-2 border-white/30">
+                    <i class="fas {% if object %}fa-edit{% else %}fa-plus-circle{% endif %} text-white text-2xl"></i>
+                </div>
+            </div>
+            <h1 class="text-3xl font-bold text-white">
+                {% if object %}Edit Your Event{% else %}Create New Event{% endif %}
+            </h1>
+            <p class="text-white/80 mt-2">
+                {% if object %}Modify your event details{% else %}Set up a new countdown timer{% endif %}
+            </p>
+        </div>
+        
+        <!-- Form Content -->
+        <div class="p-6 md:p-8">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Name Field -->
+                <div>
+                    <label for="id_name" class="form-label block text-lg font-medium mb-2">
+                        <i class="fas fa-heading mr-2 text-primary"></i>Event Name
+                    </label>
+                    <input 
+                        type="text" 
+                        name="name" 
+                        id="id_name" 
+                        required
+                        class="form-input w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        placeholder="Enter event name"
+                        {% if form.name.value %}value="{{ form.name.value }}"{% endif %}
+                    >
+                    <p class="text-slate-400 text-sm mt-1">Give your event a descriptive name</p>
+                </div>
+                
+                <!-- Date Field -->
+            <div>
+                <label for="{{ form.event_date.id_for_label }}" class="form-label block text-lg font-medium mb-2">
+                    <i class="far fa-calendar-alt mr-2 text-primary"></i>Event Date & Time
+                </label>
+                
+                {{ form.event_date }}
+
+                <p class="text-slate-400 text-sm mt-1">When will your event take place?</p>
+                
+                {% if form.event_date.errors %}
+                    <p class="text-red-500 text-sm">{{ form.event_date.errors.0 }}</p>
+                {% endif %}
+            </div>
+                            
+                <!-- Description Field -->
+                <div>
+                    <label for="id_description" class="form-label block text-lg font-medium mb-2">
+                        <i class="fas fa-align-left mr-2 text-primary"></i>Description (Optional)
+                    </label>
+                    <textarea 
+                        name="description" 
+                        id="id_description" 
+                        rows="3"
+                        class="form-input w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        placeholder="Describe your event"
+                    >{% if form.description.value %}{{ form.description.value }}{% endif %}</textarea>
+                    <p class="text-slate-400 text-sm mt-1">Add details about your event</p>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="flex flex-wrap gap-4 pt-4">
+                    <button type="submit" class="btn-primary px-8 py-3.5 rounded-lg font-semibold flex items-center">
+                        <i class="fas fa-save mr-2"></i> Save Event
+                    </button>
+                    
+                    <a href="{% url 'event_list' %}" class="btn-secondary px-8 py-3.5 rounded-lg font-semibold flex items-center">
+                        <i class="fas fa-times mr-2"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Form Footer -->
+        <div class="border-t border-slate-800 p-6 text-center text-slate-500">
+            <p>Need help? <a href="#" class="text-primary hover:underline">Contact support</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Add floating animation to decorative elements
+        const elements = document.querySelectorAll('.decoration-element');
+        elements.forEach((el, index) => {
+            el.style.animationDelay = `${index * 0.3}s`;
+        });
+        
+        // Add focus styles to form inputs
+        const inputs = document.querySelectorAll('.form-input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('text-primary');
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('text-primary');
+            });
+        });
+    </script>
+</body>
+{% endblock %}

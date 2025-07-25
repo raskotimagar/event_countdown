@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% block title %}Event Horizon - Upcoming Events{% endblock %}
+{% block content %}
+<body class="min-h-screen p-4 md:p-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-12 py-8">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent header-glow">
+                Event Horizon
+            </h1>
+            <p class="text-slate-400 text-lg">Your gateway to upcoming experiences</p>
+            
+            <div class="mt-8 flex justify-center">
+                <div class="relative">
+                    <a href="{% url 'create_event' %}" class="action-btn inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white font-medium rounded-full text-lg shadow-lg">
+                        <i class="fas fa-plus-circle mr-2"></i> Create New Event
+                    </a>
+                    <div class="absolute -top-3 -right-3">
+                        <span class="countdown-badge flex h-6 w-6">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-6 w-6 bg-indigo-500"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Stats Summary -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div class="bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 rounded-xl p-6 text-center">
+                <div class="text-3xl font-bold text-primary">{{total_events}}</div>
+                <div class="text-slate-400">Total Events</div>
+            </div>
+            <div class="bg-gradient-to-br from-secondary/20 to-secondary/5 border border-secondary/30 rounded-xl p-6 text-center">
+                <div class="text-3xl font-bold text-secondary">{{ upcoming_count }}</div>
+                <div class="text-slate-400">Upcoming</div>
+            </div>
+            <div class="bg-gradient-to-br from-purple-500/20 to-purple-500/5 border border-purple-500/30 rounded-xl p-6 text-center">
+                <div class="text-3xl font-bold text-purple-400">{{ completed_count }}</div>
+                <div class="text-slate-400">Completed</div>
+            </div>
+        </div>
+        
+        <!-- Events List -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-semibold mb-6 flex items-center">
+                <i class="fas fa-calendar-star mr-3 text-primary"></i> Upcoming Events
+            </h2>
+            
+            {% if events %}
+                <div class="space-y-6">
+                    {% for event in events %}
+                    <div class="event-card p-6 animation-slide-up" style="animation-delay: {{ forloop.counter0|divisibleby:2|yesno:'0.1s,0.2s' }}">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between">
+                            <div class="mb-4 md:mb-0">
+                                <div class="flex items-start">
+                                    <div class="bg-gradient-to-br from-primary to-secondary p-3 rounded-xl mr-4">
+                                        <i class="fas fa-calendar-day text-white text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl font-bold text-white">{{ event.name }}</h3>
+                                        <div class="flex items-center mt-2">
+                                            <i class="far fa-clock text-slate-400 mr-2"></i>
+                                            <span class="text-slate-300">{{ event.event_date }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex flex-wrap gap-3">
+                                <a href="{% url 'event_countdown' event.id %}" class="action-btn px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg flex items-center">
+                                    <i class="fas fa-stopwatch mr-2"></i> Countdown
+                                </a>
+                                <a href="{% url 'update_event' event.id %}" class="action-btn px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg flex items-center">
+                                    <i class="fas fa-edit mr-2"></i> Edit
+                                </a>
+                                <a href="{% url 'delete_event' event.id %}" class="action-btn px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg flex items-center">
+                                    <i class="fas fa-trash mr-2"></i> Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-16 rounded-xl border-2 border-dashed border-slate-700">
+                    <div class="text-6xl text-slate-600 mb-4">
+                        <i class="fas fa-calendar-plus"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-slate-300 mb-2">No upcoming events</h3>
+                    <p class="text-slate-500 mb-6">Create your first event to get started!</p>
+                    <a href="{% url 'create_event' %}" class="action-btn inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-primary to-secondary text-white font-medium rounded-lg">
+                        <i class="fas fa-plus mr-2"></i> Create Event
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Footer -->
+        <footer class="text-center border-t border-slate-800 pt-8 pb-4 text-slate-500">
+            <div class="flex justify-center space-x-6 mb-4">
+                <a href="#" class="hover:text-primary transition"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="hover:text-primary transition"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="hover:text-primary transition"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="hover:text-primary transition"><i class="fab fa-github"></i></a>
+            </div>
+            <p>© 2025 Event Horizon. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Add staggered animation to event cards
+        document.querySelectorAll('.event-card').forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
+        
+        // Add hover effect to action buttons
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px)';
+                this.style.boxShadow = '0 6px 15px rgba(0, 0, 0, 0.2)';
+            });
+            
+            btn.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+                this.style.boxShadow = '';
+            });
+        });
+    </script>
+</body>
+{% endblock %}
